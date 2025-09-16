@@ -1,53 +1,59 @@
-// === 1. Generate Secret Number ===
-const generateSecretNumber = () => Math.floor(Math.random() * 100) + 1;
+//Generate Secret Number 
+const generateSecretNumber = () => Math.floor(Math.random() * 5) + 1;
 
-// === 2. Variables ===
+//Variables
 let secretNumber;
 let attempts = 0;
+let maxAttempts = 10;
 
 // DOM elements
 const num = document.getElementById('num');
 const btn = document.getElementById('btn');
-const message = document.getElementById('message'); // assume you have a div/span for feedback
+const message = document.getElementById('message'); 
+const replayBtn = document.getElementById('replay')
 
-// === 3. Start Game ===
+//Start Game
 const startGame = () => {
   secretNumber = generateSecretNumber();
   attempts = 0;
   message.textContent = "Game started! Guess a number between 1 and 100.";
   btn.disabled = false;
+  replayBtn.style.display = "none";
   num.value = ""; // clear input
   console.log("Secret (for testing):", secretNumber); // remove in real game
 };
 
-// === 4. Get User Guess ===
+//Get User Guess
 const getUserGuess = () => Number(num.value);
 
-// === 5. Check Guess ===
+//Check Guess
 const checkGuess = (guess, secret) => {
   if (guess < secret) return "low";
   if (guess > secret) return "high";
   return "correct";
 };
 
-// === 6. Give Feedback ===
+//Give Feedback
 const giveFeedback = (result) => {
   if (result === "low") {
     message.textContent = `Too low! Attempts so far: ${attempts}`;
   } else if (result === "high") {
     message.textContent = `Too high! Attempts so far: ${attempts}`;
   } else {
-    message.textContent = `🎉 Correct! You guessed it in ${attempts} attempts.`;
+    message.textContent = `Correct! You guessed it in ${attempts} attempts.`;
   }
 };
 
-// === 7. End Game ===
-const endGame = () => {
+//End Game
+const endGame = (reason) => {
   btn.disabled = true;
-  console.log("Game Over. Secret was:", secretNumber);
+  replayBtn.style.display = "inline-block";
+  if (reason === "lost") {
+    message.textContent = `😢 Game over! You've used all ${maxAttempts} attempts. The secret number was ${secretNumber}.`;
+  }
 };
 
-// === 8. Button Click Logic ===
+//Button Click Logic
 btn.addEventListener('click', () => {
   const guess = getUserGuess();
   if (!guess || guess < 1 || guess > 100) {
@@ -60,9 +66,14 @@ btn.addEventListener('click', () => {
   giveFeedback(result);
 
   if (result === "correct") {
-    endGame();
+    endGame("win");
+  } else if (attempts >= maxAttempts) {
+    endGame("lost");
   }
 });
 
-// Start the game initially
+//Replay Button 
+replayBtn.addEventListener('click', startGame);
+
+// Start the game
 startGame();

@@ -23,11 +23,12 @@ const startGame = () => {
 };
 
 // End Game
-const endGame = (reason) => {
+const endGame = (reason, result = null) => {
   disableGuessButton();
   showReplayButton();
-  showMessage(getFeedbackMessage(null, attempts, secretNumber, maxAttempts, reason));
+  showMessage(getFeedbackMessage(result, attempts, secretNumber, maxAttempts, reason));
 };
+
 
 // Handle Guess
 const handleGuess = () => {
@@ -42,10 +43,11 @@ const handleGuess = () => {
   showMessage(getFeedbackMessage(result, attempts, secretNumber, maxAttempts));
 
   if (result === "correct") {
-    endGame("win");
-  } else if (attempts >= maxAttempts) {
-    endGame("lost");
-  }
+  endGame("win", result);
+} else if (attempts >= maxAttempts) {
+  endGame("lost");
+}
+
 };
 
 // Event listeners
